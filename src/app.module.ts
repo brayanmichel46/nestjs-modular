@@ -12,9 +12,9 @@ import { environments } from './environments';
 import config from './config';
 @Module({
   imports: [
-    HttpModule, 
-    UsersModule, 
-    ProductsModule, 
+    HttpModule,
+    UsersModule,
+    ProductsModule,
     DatabaseModule,
     ConfigModule.forRoot({
       envFilePath: environments[process.env.NODE_ENV] || '.env',
@@ -22,11 +22,10 @@ import config from './config';
       isGlobal: true,
       validationSchema: Joi.object({
         API_KEY: Joi.number().required(),
-        DATABASE_NAME:Joi.string().required(),
+        DATABASE_NAME: Joi.string().required(),
         DATABASE_PORT: Joi.number().required(),
-      })
-    })
-
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [
@@ -35,12 +34,12 @@ import config from './config';
       provide: 'TASKS',
       useFactory: async (http: HttpService) => {
         const tasks = await http
-        .get('https://jsonplaceholder.typicode.com/todos')
-        .toPromise();
+          .get('https://jsonplaceholder.typicode.com/todos')
+          .toPromise();
         return tasks.data;
       },
-      inject: [HttpService]
-    }
+      inject: [HttpService],
+    },
   ],
 })
 export class AppModule {}
