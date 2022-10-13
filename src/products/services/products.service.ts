@@ -14,15 +14,15 @@ export class ProductsService {
     return this.productModel.find().exec();
   }
 
-  findOne(id: number) {
-    const product = this.products.find((item) => item.id === id);
+  async findOne(id: string) {
+    const product = await this.productModel.findById((item) => item.id === id);
     if (!product) {
       throw new NotFoundException(`Product #${id} not found`);
     }
     return product;
   }
 
-  create(data: CreateProductDto) {
+  /*create(data: CreateProductDto) {
     this.counterId = this.counterId + 1;
     const newProduct = {
       id: this.counterId,
@@ -49,5 +49,5 @@ export class ProductsService {
     }
     this.products.splice(index, 1);
     return true;
-  }
+  }*/
 }

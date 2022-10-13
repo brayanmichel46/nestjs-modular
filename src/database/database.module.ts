@@ -9,6 +9,27 @@ const API_KEY_PROD = 'PRODXYZ';
 
 @Global()
 @Module({
+  imports:[
+    MongooseModule.forRootAsync({
+      useFactory: (configService: ConfigType<typeof config>) => {
+        const { 
+          connection, 
+          user, 
+          password, 
+          host, 
+          port, 
+          dbName
+        } = configService.mongo;
+        return{
+          uri: `${connection}://${host}:${port}`,
+          user,
+          pass: password,
+          dbName,
+        }
+      },
+      inject: [config.KEY]
+    })
+  ],
   providers: [
     {
       provide: 'API_KEY',
@@ -18,7 +39,7 @@ const API_KEY_PROD = 'PRODXYZ';
       provide: 'MONGO',
       useFactory: async (configService: ConfigType<typeof config>) => {
         const { connection, user, password, host, port, dbName} = configService.mongo;
-        const uri = `${connection}://${host}:${port}`;
+        const uri = `${connection}://${user}:${password}@${host}:${port}/?authMechanism=DEFAULT`;
         const client = new MongoClient(uri);
         await client.connect();
         const database = client.db(dbName);
@@ -27,6 +48,6 @@ const API_KEY_PROD = 'PRODXYZ';
       inject: [config.KEY]
     }
   ],
-  exports: ['API_KEY','MONGO'],
+  exports: ['API_KEY','MONGO',MongooseModule],
 })
 export class DatabaseModule {}
