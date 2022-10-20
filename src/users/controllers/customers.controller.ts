@@ -11,8 +11,10 @@ import {
 
 import { CustomersService } from '../services/customers.service';
 import { CreateCustomerDto, UpdateCustomerDto } from '../dtos/customer.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('customers')
+@ApiTags('customers')
 export class CustomerController {
   constructor(private customersService: CustomersService) {}
 
@@ -43,4 +45,5 @@ export class CustomerController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.customersService.remove(+id);
   }
+  
 }
