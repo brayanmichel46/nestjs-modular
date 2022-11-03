@@ -9,19 +9,27 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
+  UseGuards
   // ParseIntPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 import { CreateProductDto, UpdateProductDto, FilterProductsDto } from '../dtos/products.dto';
 import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 import { ProductsService } from './../services/products.service';
+import { Public } from 'src/auth/decorators/public.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/auth/models/role.model';
 
+@UseGuards(JwtAuthGuard,RolesGuard)
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
 
+  @Public()
   @Get()
   @ApiOperation({ summary: 'list of products' })
   getProducts(
@@ -40,7 +48,7 @@ export class ProductsController {
   getOne(@Param('productId', MongoIdPipe) productId: string) {
     return this.productsService.findOne(productId);
   }
-
+  @Roles(Role.ADMIN)
   @Post()
   create(@Body() payload: CreateProductDto) {
     return this.productsService.create(payload);
