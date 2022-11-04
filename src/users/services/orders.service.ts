@@ -29,6 +29,10 @@ export class OrderService {
     return order;
   }
 
+  ordersByCustomer(customerId: string) {
+    return this.orderModel.find({customer:customerId}).populate('customer').populate('products').exec();
+  }
+
   create(data: CreateOrderDto) {    
     const newModel = new this.orderModel(data);
     return newModel.save();
